@@ -1,0 +1,12 @@
+prefix=
+exec_prefix=
+libdir=${pcfiledir}
+includedir=/home/keym/project/ffmpeg/ffmpeg
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 50.36.0
+Requires: 
+Conflicts:
+Libs: ${libdir}/libavutil.a 
+Cflags: -I${includedir}
