@@ -1,6 +1,7 @@
 include config.mak
 
 SRC_DIR = $(SRC_PATH_BARE)
+#源文件目录
 
 vpath %.texi $(SRC_PATH_BARE)
 
@@ -10,10 +11,12 @@ PROGS-$(CONFIG_FFMPEG)   += ffmpeg
 #PROGS-$(CONFIG_FFSERVER) += ffserver
 
 PROGS      := $(addsuffix   $(EXESUF), $(PROGS-yes))
+#为$(PROGS-yes)添加后缀 $(EXESUF)
 PROGS_G     = $(addsuffix _g$(EXESUF), $(PROGS-yes))
 OBJS        = $(addsuffix .o,          $(PROGS-yes)) cmdutils.o src/find_start_code.o
 MANPAGES    = $(addprefix doc/, $(addsuffix .1, $(PROGS-yes)))
 PODPAGES    = $(addprefix doc/, $(addsuffix .pod, $(PROGS-yes)))
+#添加前缀
 HTMLPAGES   = $(addprefix doc/, $(addsuffix .html, $(PROGS-yes)))
 TOOLS       = $(addprefix tools/, $(addsuffix $(EXESUF), cws2fws pktdumper probetest qt-faststart trasher))
 HOSTPROGS   = $(addprefix tests/, audiogen videogen rotozoom tiny_psnr base64)
@@ -35,7 +38,7 @@ FFLIBS-$(CONFIG_AVCORE)   += avcore
 FFLIBS := avutil
 
 DATA_FILES := $(wildcard $(SRC_DIR)/ffpresets/*.ffpreset)
-
+#wildcard展开通配符*
 SKIPHEADERS = cmdutils_common_opts.h
 
 include common.mak
