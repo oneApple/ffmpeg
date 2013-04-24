@@ -4,6 +4,7 @@ SRC_DIR = $(SRC_PATH_BARE)
 #源文件目录
 
 vpath %.texi $(SRC_PATH_BARE)
+#在SRC_PATH_BARE目录下寻找.texi文件
 
 PROGS-$(CONFIG_FFMPEG)   += ffmpeg
 #PROGS-$(CONFIG_FFPLAY)   += ffplay
@@ -13,7 +14,7 @@ PROGS-$(CONFIG_FFMPEG)   += ffmpeg
 PROGS      := $(addsuffix   $(EXESUF), $(PROGS-yes))
 #为$(PROGS-yes)添加后缀 $(EXESUF)
 PROGS_G     = $(addsuffix _g$(EXESUF), $(PROGS-yes))
-OBJS        = $(addsuffix .o,          $(PROGS-yes)) cmdutils.o src/find_start_code.o
+#OBJS        = $(addsuffix .o,          $(PROGS-yes)) cmdutils.o src/find_start_code.o
 MANPAGES    = $(addprefix doc/, $(addsuffix .1, $(PROGS-yes)))
 PODPAGES    = $(addprefix doc/, $(addsuffix .pod, $(PROGS-yes)))
 #添加前缀
@@ -58,13 +59,19 @@ INSTALL_PROGS_TARGETS-$(CONFIG_SHARED) = install-libs
 all: $(FF_DEP_LIBS) $(PROGS) $(ALL_TARGETS-yes)
 
 $(PROGS): %$(EXESUF): %_g$(EXESUF)
+#ffmpeg:ffmpeg_g
 	$(CP) $< $@
+#CP=cp -p 复制属性
 	$(STRIP) $@
+#STRIP=strip 去除前后空字符
 
 config.h: .config
 .config: $(wildcard $(FFLIBS:%=$(SRC_DIR)/lib%/all*.c))
+#将FFLIBS中所有符合%模式的替换为$(SRC_DIR)/lib%/all*.c，然后展开
 	@-tput bold 2>/dev/null
+	#tput设定输出字体等
 	@-printf '\nWARNING: $(?F) newer than config.h, rerun configure\n\n'
+	#表示被更新的依赖文件的文件部分
 	@-tput sgr0 2>/dev/null
 
 SUBDIR_VARS := OBJS FFLIBS CLEANFILES DIRS TESTPROGS EXAMPLES SKIPHEADERS \
@@ -83,13 +90,14 @@ include $(1)/Makefile
 endef
 
 $(foreach D,$(FFLIBS),$(eval $(call DOSUBDIR,lib$(D))))
+#包含所有的Ｍａｋｅｆｉｌｅ
 
 ffplay_g$(EXESUF): FF_EXTRALIBS += $(SDL_LIBS)
 ffserver_g$(EXESUF): FF_LDFLAGS += $(FFSERVERLDFLAGS)
 
 %_g$(EXESUF): %.o cmdutils.o src/find_start_code.o $(FF_DEP_LIBS)
 	$(LD) $(FF_LDFLAGS) -o $@ $< cmdutils.o src/find_start_code.o $(FF_EXTRALIBS)
-
+#LD=gcc
 tools/%$(EXESUF): tools/%.o
 	$(LD) $(FF_LDFLAGS) -o $@ $< $(FF_EXTRALIBS)
 
